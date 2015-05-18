@@ -85,6 +85,22 @@ public class FillFormCustomFont
         }		
 	}
 
+    @Test
+    public void testSetFieldMixed_acroform() throws IOException, COSVisitorException
+    {
+        try (   InputStream originalStream = getClass().getResourceAsStream("acroform.pdf") )
+        {
+            PDDocument doc = PDDocument.load(originalStream);
+            String fontName = prepareFont(doc);
+
+            setField(doc, "FirstName", "My first name", fontName);
+            setFieldBold(doc, "LastName", "My last name");
+            
+            doc.save(new File(RESULT_FOLDER, "acroform-setFieldMixed.pdf"));
+            doc.close();
+        }       
+    }
+
 	public static void setField(PDDocument _pdfDocument, String name, String value) throws IOException
 	{
 		PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
@@ -135,10 +151,13 @@ public class FillFormCustomFont
 	{
 		PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
 		PDAcroForm acroForm = docCatalog.getAcroForm();
+		
+		PDResources res = acroForm.getDefaultResources();
+		if (res == null)
+		    res = new PDResources();
 
 		InputStream fontStream = getClass().getResourceAsStream("LiberationSans-Regular.ttf");
 		PDTrueTypeFont font = PDTrueTypeFont.loadTTF(_pdfDocument, fontStream);
-        PDResources res = new PDResources();
         String fontName = res.addFont(font);
         acroForm.setDefaultResources(res);
         
