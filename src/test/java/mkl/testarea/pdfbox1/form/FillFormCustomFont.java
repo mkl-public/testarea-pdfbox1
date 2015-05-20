@@ -3,6 +3,9 @@ package mkl.testarea.pdfbox1.form;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
@@ -11,7 +14,9 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextbox;
@@ -86,7 +91,7 @@ public class FillFormCustomFont
 	}
 
     @Test
-    public void testSetFieldMixed_acroform() throws IOException, COSVisitorException
+    public void testSetFieldCustomBold_acroform() throws IOException, COSVisitorException
     {
         try (   InputStream originalStream = getClass().getResourceAsStream("acroform.pdf") )
         {
@@ -96,9 +101,25 @@ public class FillFormCustomFont
             setField(doc, "FirstName", "My first name", fontName);
             setFieldBold(doc, "LastName", "My last name");
             
-            doc.save(new File(RESULT_FOLDER, "acroform-setFieldMixed.pdf"));
+            doc.save(new File(RESULT_FOLDER, "acroform-setFieldCustomBold.pdf"));
             doc.close();
-        }       
+        }
+    }
+
+    @Test
+    public void testSetFieldCustomStandard_acroform() throws IOException, COSVisitorException
+    {
+        try (   InputStream originalStream = getClass().getResourceAsStream("acroform.pdf") )
+        {
+            PDDocument doc = PDDocument.load(originalStream);
+            List<String> fontNames = prepareFont(doc, Arrays.asList(loadTrueTypeFont(doc, "LiberationSans-Regular.ttf"), PDType1Font.HELVETICA_BOLD));
+
+            setField(doc, "FirstName", "My first name", fontNames.get(0));
+            setField(doc, "LastName", "My last name", fontNames.get(1));
+            
+            doc.save(new File(RESULT_FOLDER, "acroform-setFieldCustomStandard.pdf"));
+            doc.close();
+        }
     }
 
 	public static void setField(PDDocument _pdfDocument, String name, String value) throws IOException
@@ -156,12 +177,38 @@ public class FillFormCustomFont
 		if (res == null)
 		    res = new PDResources();
 
-		InputStream fontStream = getClass().getResourceAsStream("LiberationSans-Regular.ttf");
-		PDTrueTypeFont font = PDTrueTypeFont.loadTTF(_pdfDocument, fontStream);
-        String fontName = res.addFont(font);
+        String fontName = res.addFont(loadTrueTypeFont(_pdfDocument, "LiberationSans-Regular.ttf"));
         acroForm.setDefaultResources(res);
         
         return fontName;
+	}
+
+	public PDFont loadTrueTypeFont(PDDocument _pdfDocument, String resourceName) throws IOException
+	{
+		try ( InputStream fontStream = getClass().getResourceAsStream(resourceName); )
+		{
+			return PDTrueTypeFont.loadTTF(_pdfDocument, fontStream);
+		}
+	}
+
+	public List<String> prepareFont(PDDocument _pdfDocument, List<PDFont> fonts) throws IOException
+	{
+		PDDocumentCatalog docCatalog = _pdfDocument.getDocumentCatalog();
+		PDAcroForm acroForm = docCatalog.getAcroForm();
+		
+		PDResources res = acroForm.getDefaultResources();
+		if (res == null)
+		    res = new PDResources();
+
+		List<String> fontNames = new ArrayList<String>();
+		for (PDFont font: fonts)
+		{
+			fontNames.add(res.addFont(font));
+		}
+
+        acroForm.setDefaultResources(res);
+        
+        return fontNames;
 	}
 
 	public static void setField(PDDocument _pdfDocument, String name, String value, String fontName) throws IOException
