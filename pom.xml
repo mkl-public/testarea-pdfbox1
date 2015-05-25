@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>mkl.testarea.pdfbox1</groupId>
-  <artifactId>testarea-pdfbox1</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Test area for public PDFBox v1 issues on stackoverflow etc</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>mkl.testarea.pdfbox1</groupId>
+	<artifactId>testarea-pdfbox1</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Test area for public PDFBox v1 issues on stackoverflow etc</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -17,41 +18,55 @@
 			</plugin>
 		</plugins>
 	</build>
-  <properties>
-    <pdfbox.version>1.8.9</pdfbox.version>
-    <junit.version>4.7</junit.version>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
+	<properties>
+		<pdfbox.version>1.8.9</pdfbox.version>
+		<bc.version>1.52</bc.version>
+		<junit.version>4.7</junit.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>pdfbox</artifactId>
-        <version>${pdfbox.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
 
-    <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>fontbox</artifactId>
-        <version>${pdfbox.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>fontbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
 
-    <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>jempbox</artifactId>
-        <version>${pdfbox.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>jempbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
 
-    <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>pdfbox-examples</artifactId>
-        <version>${pdfbox.version}</version>
-    </dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-examples</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
 
-  </dependencies>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>${bc.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>${bc.version}</version>
+			<type>jar</type>
+		</dependency>
+
+	</dependencies>
 </project>
