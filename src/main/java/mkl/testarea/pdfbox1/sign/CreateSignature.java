@@ -6,6 +6,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -33,13 +34,16 @@ import java.util.Enumeration;
 /**
  * This class is the code presented by the author of the stackoverflow question
  * <a href="http://stackoverflow.com/questions/30400728/signing-pdf-with-pdfbox-and-bouncycastle">
- * Signing PDF with PDFBox and BouncyCastle</a> with two sets of changes:
+ * Signing PDF with PDFBox and BouncyCastle</a> with three sets of changes:
  * <ol>
  * <li>Visibilities of some members have been changed to allow better testability
  * <li>a new static member {@link #fixed} has been added which in {@link #signPdf(File, File)}
- * switches between the original (for <code>false</code>) and the fixed (for <code>true</code>
+ * switches between the original (for <code>false</code>) and the fixed (for <code>true</code>)
  * code; additionally the order of creation of <code>fis</code> and <code>fos</code> has been
  * swapped which does not affect the original flow but is necessary for the fixed flow.
+ * <li>a new static member {@link #der} has been added which in {@link #signPdf(File, File)}
+ * switches between the original (for <code>false</code>) and improved (for <code>true</code>)
+ * code which generates a completely DER-encoded object.
  * </ol>
  * 
  * @author mkl
@@ -47,6 +51,7 @@ import java.util.Enumeration;
 public class CreateSignature implements SignatureInterface
 {
 	static boolean fixed = true;
+    static boolean der = true;
 	
     static PrivateKey privateKey;
     static Certificate certificate;
@@ -96,7 +101,15 @@ public class CreateSignature implements SignatureInterface
             gen.addCertificates(certStore);
             CMSSignedData signedData = gen.generate(input, false);
 
-            return signedData.getEncoded();
+            if (der)
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                DEROutputStream dos = new DEROutputStream(baos);
+                dos.writeObject(signedData.toASN1Structure());
+                return baos.toByteArray();
+            }
+            else
+                return signedData.getEncoded();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
