@@ -32,9 +32,10 @@ import org.junit.Test;
  * {@link #doSignRemoveType(InputStream, InputStream, File)} fixes the misleading trailer
  * Type entry resulting in valid signatures,
  * {@link #doSignTwoRevisions(InputStream, InputStream, File)} tries to use an incremental
- * update for the first change, too, but fails, and
+ * update for the first change, too, originally failed but now succeeds, and
  * {@link #doSignOneStep(InputStream, InputStream, File)} tries to add the image in the
- * same incremental update as the image but fails for cross reference table sources. 
+ * same incremental update as the image, originally failed for cross reference table sources
+ * but now succeeds. 
  * </p>
  * @author mkl
  */
@@ -112,7 +113,7 @@ public class SignLikeUnOriginalToo
         try (   InputStream source = getClass().getResourceAsStream("test.pdf");
                 InputStream logo = getClass().getResourceAsStream("Willi-1.jpg") )
         {
-            doSignTwoRevisions(source, logo, new File(RESULT_FOLDER, "test-signedTwoRevisions.pdf"));
+            doSignTwoRevisions(source, logo, new File(RESULT_FOLDER, "test-signedTwoRevisions-1.pdf"), new File(RESULT_FOLDER, "test-signedTwoRevisions-2.pdf"));
         }
     }
 
@@ -126,7 +127,7 @@ public class SignLikeUnOriginalToo
         try (   InputStream source = getClass().getResourceAsStream("/mkl/testarea/pdfbox1/form/acroform.pdf");
                 InputStream logo = getClass().getResourceAsStream("Willi-1.jpg") )
         {
-            doSignTwoRevisions(source, logo, new File(RESULT_FOLDER, "acroform-signedTwoRevisions.pdf"));
+            doSignTwoRevisions(source, logo, new File(RESULT_FOLDER, "acroform-signedTwoRevisions-1.pdf"), new File(RESULT_FOLDER, "acroform-signedTwoRevisions-2.pdf"));
         }
     }
 
@@ -252,10 +253,10 @@ public class SignLikeUnOriginalToo
     /**
      * {@link #doSignOriginal(InputStream, InputStream, File)} changed to also save the first change as new revision.
      */
-    public void doSignTwoRevisions(InputStream inputStream, InputStream logoStream, File outputDocument) throws Exception
+    public void doSignTwoRevisions(InputStream inputStream, InputStream logoStream, File intermediateDocument, File outputDocument) throws Exception
     {
-        FileOutputStream fos = new FileOutputStream(outputDocument);
-        FileInputStream fis = new FileInputStream(outputDocument);
+        FileOutputStream fos = new FileOutputStream(intermediateDocument);
+        FileInputStream fis = new FileInputStream(intermediateDocument);
 
         byte inputBytes[] = IOUtils.toByteArray(inputStream);
 
@@ -266,11 +267,18 @@ public class SignLikeUnOriginalToo
         contentStream.drawXObject(ximage, 50, 50, 356, 40);
         contentStream.close();
 
+        pdDocument.getDocumentCatalog().getCOSObject().setNeedToBeUpdate(true);
+        pdDocument.getDocumentCatalog().getPages().getCOSObject().setNeedToBeUpdate(true);
+        page.getCOSObject().setNeedToBeUpdate(true);
+        page.getResources().getCOSObject().setNeedToBeUpdate(true);
+        page.getResources().getCOSDictionary().getDictionaryObject(COSName.XOBJECT).setNeedToBeUpdate(true);
+        ximage.getCOSObject().setNeedToBeUpdate(true);
+
         fos.write(inputBytes);
         pdDocument.saveIncremental(fis, fos);
         pdDocument.close();
 
-        pdDocument = PDDocument.load(outputDocument);
+        pdDocument = PDDocument.load(intermediateDocument);
 
         PDSignature signature = new PDSignature();
         signature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
@@ -282,9 +290,11 @@ public class SignLikeUnOriginalToo
 
         pdDocument.addSignature(signature, new TC3());
 
-        fos = new FileOutputStream(outputDocument, true);
+        fos = new FileOutputStream(outputDocument);
         fis = new FileInputStream(outputDocument);
+        inputBytes = IOUtils.toByteArray(new FileInputStream(intermediateDocument));
 
+        fos.write(inputBytes);
         pdDocument.saveIncremental(fis, fos);
         pdDocument.close();
     }
@@ -302,6 +312,10 @@ public class SignLikeUnOriginalToo
         PDPageContentStream contentStream = new PDPageContentStream(pdDocument, page, true, true);
         contentStream.drawXObject(ximage, 50, 50, 356, 40);
         contentStream.close();
+
+        page.getResources().getCOSObject().setNeedToBeUpdate(true);
+        page.getResources().getCOSDictionary().getDictionaryObject(COSName.XOBJECT).setNeedToBeUpdate(true);
+        ximage.getCOSObject().setNeedToBeUpdate(true);
 
         PDSignature signature = new PDSignature();
         signature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
