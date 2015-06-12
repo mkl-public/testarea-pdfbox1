@@ -38,6 +38,39 @@ public class RenderEndorsement
     }
 
     @Test
+    public void testAlternativeQuick() throws IOException, COSVisitorException
+    {
+        String[] header = new String[]
+        {
+                "Daños - Agrícola y de animales",
+                "2015-06-05 / 2016-01-31",
+                "FONDO DE ASEGURAMIENTO AGRÍCOLA 21 DE OCTUBRE",
+                "FNP-00004408003772000"
+        };
+
+        try (   InputStream logo = getClass().getResourceAsStream("Logo.jpg")   )
+        {
+            PDDocument document = new PDDocument();
+            PdfRenderingEndorsementAlternative renderer = new PdfRenderingEndorsementAlternative(document, logo, header);
+
+            renderer.render(
+                    new BandColumn(leftHalfPageField, "Nombre del contrato/asegurado:", "Prueba Jesus Fac No Prop"),
+                    new BandColumn(rightHalfPageField, "Nombre del contrato/asegurado:", "Prueba Jesus Fac No Prop con Endoso")
+                    );
+
+            renderer.gap(20);
+
+            renderer.render(
+                    new BandColumn(leftHalfPageField, "País:", "México"),
+                    new BandColumn(rightHalfPageField, "País:", "México")
+                    );
+
+            renderer.close();
+            document.save(new File(RESULT_FOLDER, "EndorsementQuick.pdf"));
+        }
+    }
+
+    @Test
     public void testAlternative() throws IOException, COSVisitorException
     {
         String[] header = new String[]
