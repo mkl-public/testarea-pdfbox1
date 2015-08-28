@@ -108,6 +108,37 @@ public class OverlayWithEffect
         }
     }
 
+    /**
+     * <a href="http://stackoverflow.com/questions/32269571/add-a-watermark-on-a-pdf-that-contains-images-using-pdfbox">
+     * Add a watermark on a pdf that contains images using pdfbox
+     * </a>
+     * <br>
+     * <a href="https://drive.google.com/file/d/0B7hG2Ap47MTKMEpqZkpudG1CYjg/view?usp=sharing">
+     * pdf-test.pdf
+     * </a>
+     * <br>
+     * <a href="https://drive.google.com/file/d/0B7hG2Ap47MTKTjdfbzl5Q3pZUk0/view?usp=sharing">
+     * draft1.pdf
+     * </a>
+     * <p>
+     * Tested overlaying the OP's files, no issue observed.
+     * </p>
+     */
+    @Test
+    public void testOverlayWithDarkenMarcoAltieri2() throws COSVisitorException, IOException
+    {
+        try (   InputStream sourceStream = getClass().getResourceAsStream("pdf-test.pdf");
+                InputStream overlayStream = getClass().getResourceAsStream("draft1.pdf")  )
+        {
+            final PDDocument document = PDDocument.load(sourceStream);
+            final PDDocument overlay = PDDocument.load(overlayStream);
+            
+            overlayWithDarkenBlendMode(document, overlay);
+
+            document.save(new File(RESULT_FOLDER, "pdf-test-with-draft1.pdf"));
+        }
+    }
+
     void overlayWithDarkenBlendMode(PDDocument document, PDDocument overlay) throws IOException
     {
         PDXObjectForm xobject = importAsXObject(document, (PDPage) overlay.getDocumentCatalog().getAllPages().get(0));
