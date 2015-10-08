@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.util.TextPosition;
 import org.junit.BeforeClass;
@@ -91,6 +92,13 @@ public class ExtractText
     {
         PDFTextStripper stripper = new PDFTextStripper()
         {
+            @Override
+            protected void startPage(PDPage page) throws IOException
+            {
+                startOfLine = true;
+                super.startPage(page);
+            }
+
             @Override
             protected void writeLineSeparator() throws IOException
             {
