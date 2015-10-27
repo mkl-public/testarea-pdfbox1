@@ -74,6 +74,20 @@ public class ExtractAnnotationImageTest
         }
     }
 
+    /**
+     * Test using <a href="http://www.docdroid.net/TDGVQzg/imageicon.pdf.html">imageicon.pdf</a>
+     * created by the OP.
+     */
+    @Test
+    public void testImageiconPdf() throws IOException
+    {
+        try (InputStream resource = getClass().getResourceAsStream("imageicon.pdf"))
+        {
+            PDDocument document = PDDocument.load(resource);
+            extractAnnotationImages(document, new File(RESULT_FOLDER, "imageicon%s.%s").toString());;
+        }
+    }
+
     public void extractAnnotationImages(PDDocument document, String fileNameFormat) throws IOException
     {
         List<PDPage> pages = document.getDocumentCatalog().getAllPages();
