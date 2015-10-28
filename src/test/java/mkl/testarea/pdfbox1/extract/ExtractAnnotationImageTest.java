@@ -38,6 +38,24 @@ public class ExtractAnnotationImageTest
 {
     final static File RESULT_FOLDER = new File("target/test-outputs", "extract");
 
+    /**
+     * As requested by the OP, {@link #main(String[])} provides a way
+     * to use this extractor without requiring Jthe Unit framework and
+     * furthermore without requiring the PDF file to be a resource.
+     */
+    public static void main(String[] args) throws IOException
+    {
+        ExtractAnnotationImageTest extractor = new ExtractAnnotationImageTest();
+        
+        for (String arg : args)
+        {
+            try (PDDocument document = PDDocument.load(arg))
+            {
+                extractor.extractAnnotationImages(document, arg+"%s.%s");;
+            }
+        }
+    }
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
