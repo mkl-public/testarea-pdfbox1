@@ -59,6 +59,33 @@ public class RemoveUnderlines
     }
 
     /**
+     * <a href="http://stackoverflow.com/questions/34720880/remove-underlines-from-text-in-pdf-file">
+     * Remove underlines from text in PDF file
+     * </a>
+     * <br>
+     * <a href="https://www.dropbox.com/s/23g54bvt781lb93/1178.pdf?dl=0">
+     * 1178.pdf
+     * </a>
+     * <p>
+     * This test demonstrates how to remove the underlines (i.e. all blue rectangles)
+     * from the second sample document provided by the OP.
+     * </p>
+     */
+    @Test
+    public void test1178() throws IOException, COSVisitorException
+    {
+        try (   InputStream resourceStream = getClass().getResourceAsStream("1178.pdf")   )
+        {
+            PDDocument document = PDDocument.loadNonSeq(resourceStream, null);
+
+            removeBlueRectangles(document);
+            document.save(new File(RESULT_FOLDER, "1178-noBlueRectangles.pdf"));
+            
+            document.close();
+        }
+    }
+
+    /**
      * This document removes all blue filled rectangles. As the sample document
      * only uses RGB colors, actually only uses "rg" to set the blue fill color,
      * the code could be somewhat simplified.
