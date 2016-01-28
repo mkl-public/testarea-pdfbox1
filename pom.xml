@@ -19,7 +19,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<pdfbox.version>1.8.10</pdfbox.version>
+		<pdfbox.version>1.8.11</pdfbox.version>
 		<!-- for tests using PDFBox classes accessing BC use 1.47 -->
 		<!-- for tests with own classes accessing BC use 1.52 -->
 		<bc.version>1.52</bc.version>
