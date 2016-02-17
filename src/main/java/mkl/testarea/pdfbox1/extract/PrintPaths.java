@@ -48,7 +48,7 @@ public class PrintPaths extends PageDrawer
     @Override
     public void processStream(PDPage aPage, PDResources resources, COSStream cosStream) throws IOException
     {
-        PDRectangle cropBox = aPage.getCropBox();
+        PDRectangle cropBox = aPage.findCropBox();
         this.pageSize = cropBox.createDimension();
         super.processStream(aPage, resources, cosStream);
     }
