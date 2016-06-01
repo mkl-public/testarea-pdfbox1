@@ -123,4 +123,35 @@ public class ExtractText
         return stripper.getText(document);
     }
 
+    /**
+     * <a href="http://stackoverflow.com/questions/37566288/pdfbox-is-not-giving-right-output">
+     * PDFBOX is not giving right output
+     * </a>
+     * <br/>
+     * <a href="https://www.dropbox.com/s/bsm4zgv5v0mvj7v/Airtel.pdf?dl=0">
+     * Airtel.pdf
+     * </a>
+     * <p>
+     * Indeed, PDFBox text extraction hardly returns anything. But inspecting the PDF in question
+     * makes clear why it is so: Virtually all "text" in the document is not drawn using text
+     * drawing instructions but instead by defining the character outlines as paths and filling
+     * them. Thus, hardly anything short of OCR will help here.
+     * </p>
+     */
+    @Test
+    public void testExtractAsMudit() throws COSVisitorException, IOException
+    {
+        try (   InputStream documentStream = getClass().getResourceAsStream("Airtel.pdf");
+                PDDocument document = PDDocument.load(documentStream))
+        {
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setStartPage(1);
+            pdfStripper.setEndPage(1);
+            String parsedText = pdfStripper.getText(document);
+
+            System.out.println("\n'Airtel.pdf', extract as Mudit:");
+            System.out.println(parsedText);
+            System.out.println("***********************************");
+        }
+    }
 }
