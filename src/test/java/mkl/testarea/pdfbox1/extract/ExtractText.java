@@ -154,4 +154,38 @@ public class ExtractText
             System.out.println("***********************************");
         }
     }
+
+    /**
+     * <a href="http://stackoverflow.com/questions/39962563/detect-bold-italic-and-strike-through-text-using-pdfbox-with-vb-net">
+     * Detect Bold, Italic and Strike Through text using PDFBox with VB.NET
+     * </a>
+     * <br/>
+     * <a href="http://www.filedropper.com/exampledocument">
+     * Example Document.pdf
+     * </a>
+     * <p>
+     * This test shows how to extract text with styles using the {@link PDFStyledTextStripper}.
+     * </p>
+     */
+    @Test
+    public void testExtractStyledFromExampleDocument() throws COSVisitorException, IOException
+    {
+        try (   InputStream documentStream = getClass().getResourceAsStream("Example Document.pdf" );
+                PDDocument document = PDDocument.load(documentStream))
+        {
+            String styled = extractStyled(document);
+
+            System.out.println("\n'Example Document.pdf', extract with style:");
+            System.out.println(styled);
+            System.out.println("***********************************");
+        }
+    }
+
+    String extractStyled(PDDocument document) throws IOException
+    {
+        PDFTextStripper stripper = new PDFStyledTextStripper();
+        stripper.setSortByPosition(true);
+        return stripper.getText(document);
+    }
+
 }
