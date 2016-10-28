@@ -188,4 +188,48 @@ public class ExtractText
         return stripper.getText(document);
     }
 
+    /**
+     * <a href="http://stackoverflow.com/questions/40296660/extract-pdf-text-location-using-pdfboxnet">
+     * extract pdf text location using pdfboxnet
+     * </a>
+     * <br/>
+     * <a href="https://drive.google.com/open?id=0B45rDxvaXzsmcFo1QXhNdDBXT28">
+     * mathml88.pdf
+     * </a>
+     * <p>
+     * This test shows how to extract text plus word positions.
+     * </p>
+     */
+    @Test
+    public void testExtractWordLocationsFromMathml88() throws COSVisitorException, IOException
+    {
+        try (   InputStream documentStream = getClass().getResourceAsStream("mathml88.pdf" );
+                PDDocument document = PDDocument.load(documentStream))
+        {
+            String wordLocations = extractWordLocations(document);
+
+            System.out.println("\n'mathml88.pdf', extract with word locations:");
+            System.out.println(wordLocations);
+            System.out.println("***********************************");
+        }
+    }
+
+    String extractWordLocations(PDDocument document) throws IOException
+    {
+        PDFTextStripper stripper = new PDFTextStripper()
+        {
+            @Override
+            protected void writeString(String text, List<TextPosition> textPositions) throws IOException
+            {
+                super.writeString(text, textPositions);
+
+                TextPosition firstProsition = textPositions.get(0);
+                TextPosition lastPosition = textPositions.get(textPositions.size() - 1);
+                writeString(String.format("[%s - %s / %s]", firstProsition.getXDirAdj(), lastPosition.getXDirAdj() + lastPosition.getWidthDirAdj(), firstProsition.getYDirAdj()));
+            }
+        };
+        stripper.setSortByPosition(true);
+        return stripper.getText(document);
+    }
+    
 }
