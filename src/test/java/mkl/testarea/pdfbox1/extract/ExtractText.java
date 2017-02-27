@@ -181,6 +181,36 @@ public class ExtractText
         }
     }
 
+    /**
+     * <a href="https://github.com/mkl-public/testarea-pdfbox1/issues/1">
+     * PDFStyledTextStripper StrikeThrough Bug #1
+     * </a>
+     * <br/>
+     * <a href="https://www.dropbox.com/s/5chty5f4yotkb7s/style-test.pdf?dl=1">
+     * style-test.pdf
+     * </a>
+     * <p>
+     * Indeed, the 's' of 'stroked' was not recognized as style strikethrough.
+     * This appears due to a border case where float / double arithmetics give
+     * you a headache. To make this work, the tolerance of the {@link PDFStyledTextStripper}
+     * helper class <code>TransformedRectangle</code> method <code>strikesThrough</code>
+     * (and also <code>underlines</code>) has been changed.
+     * </p>
+     */
+    @Test
+    public void testExtractStyledFromStyleTest() throws COSVisitorException, IOException
+    {
+        try (   InputStream documentStream = getClass().getResourceAsStream("style-test.pdf" );
+                PDDocument document = PDDocument.load(documentStream))
+        {
+            String styled = extractStyled(document);
+
+            System.out.println("\n'style-test.pdf', extract with style:");
+            System.out.println(styled);
+            System.out.println("***********************************");
+        }
+    }
+
     String extractStyled(PDDocument document) throws IOException
     {
         PDFTextStripper stripper = new PDFStyledTextStripper();

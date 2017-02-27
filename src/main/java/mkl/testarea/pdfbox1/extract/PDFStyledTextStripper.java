@@ -34,6 +34,20 @@ import org.apache.pdfbox.util.operator.OperatorProcessor;
  * {@link TransformedRectangle#strikesThrough(TextPosition)} only work
  * with the restriction described in the methods themselves.
  * </p>
+ * <a href="https://github.com/mkl-public/testarea-pdfbox1/issues/1">
+ * PDFStyledTextStripper StrikeThrough Bug #1
+ * </a>
+ * <br/>
+ * <a href="https://www.dropbox.com/s/5chty5f4yotkb7s/style-test.pdf?dl=1">
+ * style-test.pdf
+ * </a>
+ * <p>
+ * Indeed, the 's' of 'stroked' was not recognized as style strikethrough.
+ * This appears due to a border case where float / double arithmetics give
+ * you a headache. To make this work, the tolerance of the {@link TransformedRectangle}
+ * method <code>strikesThrough</code> (and also <code>underlines</code>)
+ * has been changed.
+ * </p>
  * @author mkl
  */
 public class PDFStyledTextStripper extends PDFTextStripper
@@ -128,7 +142,7 @@ public class PDFStyledTextStripper extends PDFTextStripper
             // and horizontal rectangular strikeThroughs with p0 at the left bottom and p2 at the right top
 
             // Check if rectangle horizontally matches (at least) the text
-            if (p0.getX() > matrix.getXPosition() || p2.getX() < matrix.getXPosition() + textPosition.getWidth() - textPosition.getFontSizeInPt() / 10.0)
+            if (p0.getX() > matrix.getXPosition() + textPosition.getWidth() * .1f || p2.getX() < matrix.getXPosition() + textPosition.getWidth() * .9f)
                 return false;
             // Check whether rectangle vertically is at the right height to underline
             double vertDiff = p0.getY() - matrix.getYPosition();
@@ -145,7 +159,7 @@ public class PDFStyledTextStripper extends PDFTextStripper
             // and horizontal rectangular underlines with p0 at the left bottom and p2 at the right top
 
             // Check if rectangle horizontally matches (at least) the text
-            if (p0.getX() > matrix.getXPosition() || p2.getX() < matrix.getXPosition() + textPosition.getWidth() - textPosition.getFontSizeInPt() / 10.0)
+            if (p0.getX() > matrix.getXPosition() + textPosition.getWidth() * .1f || p2.getX() < matrix.getXPosition() + textPosition.getWidth() * .9f)
                 return false;
             // Check whether rectangle vertically is at the right height to underline
             double vertDiff = p0.getY() - matrix.getYPosition();
