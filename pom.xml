@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mkl.testarea.pdfbox1</groupId>
 	<artifactId>testarea-pdfbox1</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.8.12-SNAPSHOT</version>
 	<name>Test area for public PDFBox v1 issues on stackoverflow etc</name>
 	<build>
 		<plugins>
@@ -19,7 +19,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<pdfbox.version>1.8.11</pdfbox.version>
+		<pdfbox.version>1.8.12</pdfbox.version>
 		<!-- for tests using PDFBox classes accessing BC use 1.47 -->
 		<!-- for tests with own classes accessing BC use 1.52 -->
 		<bc.version>1.52</bc.version>
