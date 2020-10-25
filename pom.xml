@@ -23,7 +23,7 @@
 		<!-- for tests using PDFBox classes accessing BC use 1.47 -->
 		<!-- for tests with own classes accessing BC use 1.52 -->
 		<bc.version>1.52</bc.version>
-		<junit.version>4.7</junit.version>
+		<junit.version>4.13.1</junit.version>
 	</properties>
 	<dependencies>
 		<dependency>
